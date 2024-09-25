@@ -1,0 +1,12 @@
+.scheduler-toolbar {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+::deep .justify-left {
+    justify-self: left;
+}
+
+::deep .justify-center {
+    justify-self: center;
+}

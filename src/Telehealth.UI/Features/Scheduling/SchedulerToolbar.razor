@@ -1,0 +1,10 @@
+﻿<div class="scheduler-toolbar">
+	<CreateScheduleButton CssClass="justify-left" />
+	<SchedulerFlyoutCalendar CssClass="justify-center" Date="@Date" DateChanged="@DateChanged" DateFormat="@DateFormat" />
+</div>
+
+@code {
+	[Parameter, EditorRequired] public required DateTime Date { get; set; }
+	[Parameter] public EventCallback<DateTime> DateChanged { get; set; }
+	[Parameter] public string DateFormat { get; set; } = "MMMM dd, yyyy";
+}

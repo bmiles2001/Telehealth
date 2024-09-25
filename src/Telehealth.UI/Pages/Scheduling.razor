@@ -1,0 +1,40 @@
+﻿@page "/scheduling"
+
+@using Telehealth.UI.Features.Scheduling
+
+<PageTitle>Appointment Scheduling</PageTitle>
+
+<Scheduler @bind-Date="@_schedulerDate" @bind-Date:after="@RefreshAppointments"
+		   @bind-View="@_view"
+		   @bind-VisibleProviders="@_visibleProviders"
+		   Appointments="@_appointments"
+		   Providers="@PracticeProvider.Providers"
+		   PracticeConfiguration="@PracticeProvider.Configuration" />
+
+@code {
+
+	[Inject] public required IScheduleProvider ScheduleProvider { get; set; }
+	[Inject] public required IPracticeProvider PracticeProvider { get; set; }
+
+	private DateTime _schedulerDate = DateTime.Today;
+	private SchedulerViewType _view = SchedulerViewType.Day;
+	private IEnumerable<Practice.Provider> _visibleProviders = [];
+	private IEnumerable<Appointment.Response> _appointments = [];
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await base.OnAfterRenderAsync(firstRender);
+
+		if (firstRender)
+		{
+			_visibleProviders = PracticeProvider.Providers;
+			await RefreshAppointments();
+		}
+	}
+
+	private async Task RefreshAppointments()
+	{
+		_appointments = await ScheduleProvider.GetAppointments(_schedulerDate.Add(PracticeProvider.Configuration.OpeningTime), PracticeProvider.Providers);
+		StateHasChanged();
+	}
+}

@@ -1,0 +1,22 @@
+﻿<DxButton CssClass="@CssClass" RenderStyle="ButtonRenderStyle.Primary" RenderStyleMode="ButtonRenderStyleMode.Contained" Text="Create Appointment" Click="@ShowCreateAppointmentWindow" />
+
+<DxWindow @ref="@_window"
+			ShowFooter="false"
+			HeaderText="Create Appointment"
+			AllowResize
+			ShowCloseButton
+			CloseOnEscape
+			@bind-Visible="@_isCreatingAppointment">
+	<BodyContentTemplate>
+		<CreateAppointment />
+	</BodyContentTemplate>
+</DxWindow>
+
+@code {
+    [Parameter] public string? CssClass { get; set; }
+
+    private DxWindow? _window;
+    private bool _isCreatingAppointment;
+
+    private void ShowCreateAppointmentWindow() => _isCreatingAppointment = true;
+}

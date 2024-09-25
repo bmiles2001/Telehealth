@@ -1,0 +1,26 @@
+﻿<div id="@SchedulerFlyoutCalendarId" class="@CssClass">
+	<TextButton Text="<" OnClick="@PreviousDay" />
+	<TextButton Text="@Date.ToString(DateFormat)" OnClick="@ShowFlyout" />
+	<TextButton Text=">" OnClick="@NextDay" />
+
+	<DxFlyout @bind-IsOpen="@_showCalendar"
+			  AnimationType="FlyoutAnimationType.Fade"
+			  PositionTarget="@SchedulerPositionTarget">
+			  <Calendar Date="@Date" DateChanged="@DateChanged" />
+	</DxFlyout>
+</div>
+
+@code {
+	private bool _showCalendar;
+
+	[Parameter] public string? CssClass { get; set; }
+	[Parameter, EditorRequired] public required DateTime Date { get; set; }
+	[Parameter] public EventCallback<DateTime> DateChanged { get; set; }
+	[Parameter] public string DateFormat { get; set; } = "MMMM dd, yyyy";
+
+	public const string SchedulerFlyoutCalendarId = "scheduler-flyout-calendar-id";
+	public const string SchedulerPositionTarget = $"#{SchedulerFlyoutCalendarId}";
+	public void ShowFlyout() => _showCalendar = !_showCalendar;
+	public async Task NextDay() => await DateChanged.InvokeAsync(Date.AddDays(1));
+	public async Task PreviousDay() => await DateChanged.InvokeAsync(Date.AddDays(-1));
+}

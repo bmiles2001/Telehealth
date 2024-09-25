@@ -1,0 +1,16 @@
+﻿@if (HasContent)
+{
+	<SectionContent SectionName="@SectionName">@ChildContent</SectionContent>
+}
+else
+{
+	<SectionOutlet SectionName="@SectionName" />
+}
+
+@code {
+	private bool HasContent => ChildContent is not null;
+	const string SectionName = "content-placeholder";
+
+	[Parameter] public RenderFragment? ChildContent { get; set; }
+
+}

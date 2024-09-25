@@ -1,0 +1,14 @@
+.layout-container {
+    display: grid;
+    grid-template-columns: 1fr 10fr;
+    min-height: 100dvh;
+}
+
+.layout-content {
+    overflow-x: hidden;
+    overflow-y: auto;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    padding-top: 1rem;
+    padding-bottom: 0.5rem;
+}

@@ -1,0 +1,14 @@
+/** Remove Calendar footer */
+::deep dxbl-calendar .dxbl-calendar-footer {
+    display: none;
+}
+
+/** Remove Week number header placeholder */
+::deep dxbl-calendar dxbl-calendar-table-container table .dxbl-calendar-days-of-week:first-child {
+    display: none;
+}
+
+/** Remove Week number*/
+::deep dxbl-calendar dxbl-calendar-table-container table .dxbl-calendar-week-number {
+    display: none;
+}

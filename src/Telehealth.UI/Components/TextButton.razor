@@ -1,0 +1,6 @@
+﻿<DxButton RenderStyle="ButtonRenderStyle.None" RenderStyleMode="ButtonRenderStyleMode.Text" Text="@Text" Click="@OnClick" />
+
+@code {
+	[Parameter, EditorRequired] public required string Text { get; set; }
+	[Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+}

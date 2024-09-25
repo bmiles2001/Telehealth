@@ -1,0 +1,12 @@
+﻿<div>
+	<DxCalendar T="DateTime"
+				SelectedDate="@Date"
+				SelectedDateChanged="@DateChanged"
+				VisibleDate="@Date"
+				VisibleDateChanged="@DateChanged" />
+</div>
+
+@code {
+	[Parameter, EditorRequired] public required DateTime Date { get; set; }
+	[Parameter] public EventCallback<DateTime> DateChanged { get; set; }
+}

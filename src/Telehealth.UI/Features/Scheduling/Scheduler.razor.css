@@ -1,0 +1,29 @@
+.scheduler {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Hide the DevExpress custom toolbar */
+::deep dxbl-scheduler .dxbl-sc-tb-wrapper {
+    display: none;
+}
+
+/* Remove status indicator on appointments */
+::deep dxbl-scheduler .dxbl-apt-status-container {
+    display: none;
+}
+
+/* Update scheduler to fit the screen */
+::deep dxbl-scheduler {
+    height: 100%;
+}
+    /* Scroll container */
+    ::deep dxbl-scheduler .dxbl-sc-scroll-container {
+        height: 100%;
+    }
+
+    /* Appointments timescale table */
+    ::deep dxbl-scheduler .dxbl-sc-table.dxbl-sc-vertical-view {
+        height: 100%;
+    }
