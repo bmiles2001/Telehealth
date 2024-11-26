@@ -1,0 +1,35 @@
+﻿@code {
+	// <DxComboBox Data="@_providers"
+	// 			NullText="Select a provider"
+	// 			TData="PracticeProvider.Profile"
+	// 			TextFieldName="@nameof(Profiles.Profile.Details.FullName)"
+	// 			TValue="PracticeProvider.Profile"
+	// 			Value="@Provider"
+	// 			ValueChanged="@OnProviderChanged"
+	// 			ValueFieldName="@nameof(PracticeProvider.Id)" />
+
+	// [Inject] public required ISender Request { get; set; }
+
+	// [Parameter] public Provider.Profile? Provider { get; set; }
+	// [Parameter] public EventCallback<Provider.Profile?> ProviderChanged { get; set; }
+	// [Parameter, EditorRequired] public required Practice.Id PracticeId { get; set; }
+
+	// private IEnumerable<PracticeProvider.Profile>? _providers;
+
+	// protected override async Task OnAfterRenderAsync(bool firstRender)
+	// {
+	// 	if (firstRender)
+	// 	{
+	// 		_providers = await Request.Send(new PracticeProvider.GetBy(PracticeId));
+	// 	}
+	// }
+
+	// private async Task OnProviderChanged(PracticeProvider.Profile? providerChanged)
+	// {
+	// 	if (ProviderChanged.HasDelegate)
+	// 	{
+	// 		await ProviderChanged.InvokeAsync(providerChanged);
+	// 	}
+	// }
+
+}

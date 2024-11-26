@@ -1,0 +1,26 @@
+﻿<DxWindow @bind-Visible:get="@Visible" @bind-Visible:set="@VisibleChanged"
+		  AllowResize
+		  BodyCssClass="@BodyCssClass"
+		  CloseOnEscape
+		  CssClass="@WindowCssClass"
+		  HeaderText="@HeaderText"
+		  HorizontalAlignment="HorizontalAlignment.Center"
+		  ShowCloseButton
+		  ShowFooter="false"
+		  VerticalAlignment="VerticalAlignment.Center"
+		  Width="50rem">
+	<BodyContentTemplate>
+		<PatientSearch @bind-SelectedProfile:get="@SelectedProfile" @bind-SelectedProfile:set="@SelectedProfileChanged" />
+	</BodyContentTemplate>
+</DxWindow>
+
+@code {
+	[Parameter] public string? BodyCssClass { get; set; }
+	[Parameter] public string HeaderText { get; set; } = "Patient Search";
+	[Parameter] public string? WindowCssClass { get; set; }
+	[Parameter] public bool Visible { get; set; }
+	[Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+
+	[Parameter] public Profiles.Profile.Details? SelectedProfile { get; set; }
+	[Parameter] public EventCallback<Profiles.Profile.Details?> SelectedProfileChanged { get; set; }
+}

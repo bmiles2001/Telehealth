@@ -1,0 +1,28 @@
+﻿@page "/providers"
+@using Telehealth.UI.Features.Practices.Providers
+<h3>ShowProviders</h3>
+
+<DxGrid Data="@_providers">
+	<Columns>
+		<DxGridDataColumn FieldName="@nameof(Provider.Details.ProviderId)" Caption="Provider Id" />
+		<DxGridDataColumn FieldName="@nameof(Provider.Details.Profile.FullName)" Caption="Thing" UnboundType="GridUnboundColumnType.Object" UnboundExpression="Profile.FullName" />
+		<DxGridDataColumn FieldName="@nameof(Provider.Details.Rate)" Caption="Rate" />
+	</Columns>
+</DxGrid>
+
+@code {
+
+	[Inject] public required ISender Request { get; set; }
+
+	private IEnumerable<Provider.Details> _providers { get; set; } = [];
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			_providers = await Request.Send(new Provider.GetBy() { });
+			StateHasChanged();
+		}
+
+	}
+}

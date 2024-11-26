@@ -1,109 +1,46 @@
-﻿<div class="scheduler">
+﻿
+<div class="scheduler">
 
 	<SchedulerToolbar @bind-Date="@Date" />
 
-	<DxScheduler CssClass="@SchedulerCssClass"
-				 DataStorage="@_dataStorage"
-				 GroupType="SchedulerGroupType.Date"
-				 ResourceColorInHeaderVisible
-				 VisibleResourcesDataSource="@VisibleProviders" VisibleResourcesDataSourceChanged="@OnVisibleProvidersChanged"
-				 @bind-ActiveViewType:get="@View" @bind-ActiveViewType:set="@OnViewChanged"
-				 @bind-StartDate:get="@Date" @bind-StartDate:set="@OnDateChanged"
-				 AllowCreateAppointment="false"
-				 AllowDeleteAppointment="false"
-				 AllowDragAppointment="false"
-				 AllowDragAppointmentBetweenResources="false"
-				 AllowEditAppointment="false"
-				 AllowResizeAppointment="false"
-				 ResourceNavigatorVisible="false"
-				 InnerComponentSizeMode="SizeMode.Medium">
-		<DxSchedulerDayView ShowWorkTimeOnly
-							WorkTime="@_workingHours"
-							TimeScale="TimeSpan.FromMinutes(15)"
-							DayCount="1"
-							TimeIndicatorVisibility="@SchedulerTimeIndicatorVisibility.Always"
-							SnapToCellsMode="SchedulerSnapToCellsMode.Always" />
-	</DxScheduler>
+	<SchedulerBase Appointments="@Appointments"
+				   BusinessHours="@BusinessHours"
+				   CssClass="@CssClass"
+				   Providers="@Providers"
+				   @bind-Date="@Date"
+				   @bind-ViewType:get="@ViewType"
+				   @bind-VisibleProviders="@VisibleProviders" />
+
 </div>
+
+<ContentPlaceholder SectionName="@Schedule.ProviderContentPlaceholder">
+	<ProviderDropdown CssClass="cw-480"
+					  Providers="@Providers"
+					  SelectedProviders="@VisibleProviders"
+					  SelectedProvidersChanged="@OnVisibleProvidersChanged"
+					  ShowSelectedValues
+					  TextFieldName="@Schedule.ProviderTextFieldName"
+					  ValueFieldName="@Schedule.ProviderTextFieldName" />
+</ContentPlaceholder>
 @code {
 
-	// Scheduler Appointments
-	[Parameter, EditorRequired] public required IEnumerable<Appointment.Response> Appointments { get; set; }
-
-	// Scheduler Date
-	[Parameter, EditorRequired] public required DateTime Date { get; set; } = DateTime.Today;
+	[Parameter] public required IEnumerable<Schedule.AppointmentDetails> Appointments { get; set; }
+	[Parameter] public string? CssClass { get; set; }
+	[Parameter] public required Location.OperatingHours BusinessHours { get; set; }
+	[Parameter] public required DateTime Date { get; set; } = DateTime.Today;
 	[Parameter] public EventCallback<DateTime> DateChanged { get; set; }
+	[Parameter] public SchedulerViewType ViewType { get; set; }
+	[Parameter] public EventCallback<SchedulerViewType> ViewTypeChanged { get; set; }
+	[Parameter] public required IEnumerable<Schedule.ProviderDetails> Providers { get; set; } = [];
+	[Parameter] public required IEnumerable<Schedule.ProviderDetails> VisibleProviders { get; set; } = [];
+	[Parameter] public EventCallback<IEnumerable<Schedule.ProviderDetails>> VisibleProvidersChanged { get; set; }
 
-	// Healthcare Providers
-	[Parameter, EditorRequired] public required IEnumerable<Practice.Provider> Providers { get; set; } = [];
-	[Parameter] public EventCallback<Practice.Provider> ProvidersChanged { get; set; }
-
-	[Parameter] public string? SchedulerCssClass { get; set; }
-
-	// Scheduler Views
-	[Parameter] public SchedulerViewType View { get; set; } = SchedulerViewType.Default;
-	[Parameter] public EventCallback<SchedulerViewType> ViewChanged { get; set; }
-
-	// Visible Healthcare Providers
-	[Parameter, EditorRequired] public required IEnumerable<Practice.Provider> VisibleProviders { get; set; } = [];
-	[Parameter] public EventCallback<IEnumerable<Practice.Provider>> VisibleProvidersChanged { get; set; }
-
-	[Parameter, EditorRequired] public required Practice.Configuration PracticeConfiguration { get; set; }
-
-	private DxSchedulerDataStorage? _dataStorage;
-	private DxSchedulerTimeSpanRange _workingHours => new(PracticeConfiguration.OpeningTime, PracticeConfiguration.ClosingTime);
-
-	protected override async Task OnParametersSetAsync()
-	{
-		await base.OnParametersSetAsync();
-
-		_dataStorage = new DxSchedulerDataStorage
-			{
-				AppointmentMappings = _appointmentMappings,
-				AppointmentsSource = Appointments,
-				ResourceMappings = _providerMappings,
-				ResourcesSource = Providers
-			};
-	}
-
-	private readonly DxSchedulerResourceMappings _providerMappings = new()
-		{
-			Id = nameof(Practice.Provider.Id),
-			Caption = nameof(Practice.Provider.Name),
-			BackgroundCssClass = nameof(Practice.Provider.BackgroundCss),
-			TextCssClass = nameof(Practice.Provider.TextCss)
-		};
-
-	private readonly DxSchedulerAppointmentMappings _appointmentMappings = new()
-		{
-			Start = nameof(Appointment.Response.StartTime),
-			End = nameof(Appointment.Response.EndTime),
-			Subject = nameof(Appointment.Response.For),
-			ResourceId = nameof(Appointment.Response.ProviderId),
-			Location = nameof(Appointment.Response.Place)
-		};
-
-	private async Task OnDateChanged(DateTime newDate)
-	{
-		if (DateChanged.HasDelegate)
-		{
-			await DateChanged.InvokeAsync(newDate);
-		}
-	}
-
-	private async Task OnViewChanged(SchedulerViewType newViewType)
-	{
-		if (ViewChanged.HasDelegate)
-		{
-			await ViewChanged.InvokeAsync(newViewType);
-		}
-	}
-
-	private async Task OnVisibleProvidersChanged(System.Collections.IEnumerable visibleProviders)
+	public async Task OnVisibleProvidersChanged(IEnumerable<Schedule.ProviderDetails> changedProviders)
 	{
 		if (VisibleProvidersChanged.HasDelegate)
 		{
-			await VisibleProvidersChanged.InvokeAsync(visibleProviders.Cast<Practice.Provider>());
+			await VisibleProvidersChanged.InvokeAsync(changedProviders);
+			StateHasChanged();
 		}
 	}
 }

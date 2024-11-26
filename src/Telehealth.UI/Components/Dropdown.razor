@@ -1,0 +1,27 @@
+﻿@typeparam TSelection
+
+<DxTagBox CssClass="@CssClass"
+		  ClearButtonDisplayMode="DataEditorClearButtonDisplayMode.Auto"
+		  Data="@Data"
+		  DropDownWidthMode="DropDownWidthMode.EditorWidth"
+		  NullText="@EmptyDropDownText"
+		  HideSelectedItems="@ShowSelectedValues"
+		  TextFieldName="@TextFieldName"
+		  ValueFieldName="@ValueFieldName"
+		  TagDisplayTemplate="@DisplayTemplate"
+		  @bind-Values="@SelectedValues" />
+
+@code {
+
+	[Parameter] public string? CssClass { get; init; }
+	[Parameter] public required IEnumerable<TSelection> Data { get; init; }
+	[Parameter, EditorRequired] public required string TextFieldName { get; init; }
+	[Parameter, EditorRequired] public required string ValueFieldName { get; init; }
+	[Parameter] public required IEnumerable<TSelection> SelectedValues { get; set; }
+	[Parameter] public EventCallback<IEnumerable<TSelection>> SelectedValuesChanged { get; init; }
+	[Parameter] public bool ShowSelectedValues { get; init; }
+	[Parameter] public RenderFragment<TagBoxTagDisplayTemplateContext<TSelection>>? DisplayTemplate { get; init; }
+
+	private const string EmptyDropDownText = "Select a provider";
+	private bool HasSelectedValues => SelectedValues.Any();
+}

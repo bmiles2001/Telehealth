@@ -1,10 +1,10 @@
-using Telehealth.UI.Contracts;
-using Telehealth.UI.Features.Scheduling;
+using Telehealth.UI.Extensions;
 
 namespace Telehealth.UI;
 
 public static class Program
 {
+	public static readonly System.Reflection.Assembly ProgramAssembly = typeof(Program).Assembly;
 	public static async Task Main(string[] args)
 	{
 		var builder = WebApplication.CreateBuilder(args);
@@ -13,10 +13,11 @@ public static class Program
 		builder.Services.AddRazorComponents()
 			.AddInteractiveServerComponents();
 
-		builder.Services.AddDevExpressBlazor(configure => configure.BootstrapVersion = DevExpress.Blazor.BootstrapVersion.v5);
-		builder.Services.AddScoped<IPracticeProvider, PracticeProvider>();
-		builder.Services.AddScoped<IScheduleProvider, FakeScheduleProvider>();
-		builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(typeof(Program).Assembly));
+		builder.AddDatabaseContext();
+
+		builder.Services
+			.AddMediatR(config => config.RegisterServicesFromAssembly(ProgramAssembly))
+			.AddDevExpressBlazor(configure => configure.BootstrapVersion = DevExpress.Blazor.BootstrapVersion.v5);
 
 		var app = builder.Build();
 

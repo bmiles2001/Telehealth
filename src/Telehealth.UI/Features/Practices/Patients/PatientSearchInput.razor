@@ -1,0 +1,18 @@
+﻿<DxTextBox @bind-Text:get="@Value" @bind-Text:set="@ValueChanged"
+		   BindValueMode="@BindValueMode.OnInput"
+		   ClearButtonDisplayMode="DataEditorClearButtonDisplayMode.Auto"
+		   CssClass="@CssClass"
+		   NullText="@Placeholder"
+		   SizeMode="@Size">
+	<Buttons>
+		<DxEditorButton Click="@Click" Text="Search" Tooltip="Search" />
+	</Buttons>
+</DxTextBox>
+@code {
+	[Parameter] public string? CssClass { get; set; }
+	[Parameter] public string? Value { get; set; }
+	[Parameter] public EventCallback<string?> ValueChanged { get; set; }
+	[Parameter] public string? Placeholder { get; set; }
+	[Parameter] public SizeMode? Size { get; set; }
+	[Parameter] public EventCallback Click { get; set; }
+}

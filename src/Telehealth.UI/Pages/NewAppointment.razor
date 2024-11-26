@@ -1,0 +1,55 @@
+﻿@page "/new-appointment"
+@* @using Telehealth.UI.Features.Patients
+@using Telehealth.UI.Features.Practices.Components
+
+<PageTitle>New Appointment</PageTitle>
+
+<div class="page-container">
+	<div class="col-1">
+		@if (_selectedProfile is not null)
+		{
+			<div>Profile: @_selectedProfile @_selectedProfile.LastName</div>
+		}
+
+		<ProviderSelector  />
+	</div>
+	<div class="col-2">
+		<Scheduler @bind-Date="@_today"
+				   Appointments="@_appointments"
+				   BusinessHours="@PracticeProvider.Configuration"
+				   Providers="@PracticeProvider.Providers"
+				   VisibleProviders="@_visibleProviders"
+				   />
+	</div>
+	<PatientSearchWindow @bind-Visible="@_isSearching" @bind-SelectedProfile="@_selectedProfile"  />
+ </div>*@
+
+@code {
+ //    [Inject] public required ISender Request { get; set; }
+ //    // [Inject] public required IAppointmentProvider AppointmentProvider { get; set; }
+ //    // [Inject] public required IPracticeProvider PracticeProvider { get; set; }
+
+ //    private IEnumerable<Appointment.Response> _appointments = [];
+ //    private bool _isSearching;
+ //    private string? _name;
+ //    private Features.Profiles.Profile.Details? _selectedProfile;
+ //    private DateTime _today = DateTime.Today;
+	// private IEnumerable<Features.PracticeProvider> _visibleProviders = [];
+
+	// protected override void OnAfterRender(bool firstRender)
+	// {
+	// 	if (firstRender)
+	// 	{
+	// 		_isSearching = true;
+	// 		StateHasChanged();
+	// 	}
+
+	// 	base.OnAfterRender(firstRender);
+	// }
+
+	// private async Task OnSelectedProfileChanged(Patient.Profile selectedProfile)
+	// {
+	// 	_selectedProfile = selectedProfile;
+	// 	await Task.CompletedTask;
+	// }
+}

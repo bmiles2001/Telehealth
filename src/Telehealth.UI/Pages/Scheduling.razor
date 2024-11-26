@@ -1,25 +1,28 @@
 ﻿@page "/scheduling"
 
-@using Telehealth.UI.Features.Scheduling
-
 <PageTitle>Appointment Scheduling</PageTitle>
 
-<Scheduler @bind-Date="@_schedulerDate" @bind-Date:after="@RefreshAppointments"
-		   @bind-View="@_view"
-		   @bind-VisibleProviders="@_visibleProviders"
-		   Appointments="@_appointments"
-		   Providers="@PracticeProvider.Providers"
-		   PracticeConfiguration="@PracticeProvider.Configuration" />
+@if (!IsLoading)
+{
+	<Scheduler Appointments="@_appointments"
+			   BusinessHours="@_location!.OperatingHours"
+			   @bind-Date="@_schedulerDate" @bind-Date:after="@RefreshAppointments"
+			   Providers="@_providers"
+			   @bind-ViewType="@_view"
+			   @bind-VisibleProviders="@_visibleProviders" />
+}
 
 @code {
 
-	[Inject] public required IScheduleProvider ScheduleProvider { get; set; }
-	[Inject] public required IPracticeProvider PracticeProvider { get; set; }
+	[Inject] public required ISender Request { get; set; }
 
 	private DateTime _schedulerDate = DateTime.Today;
-	private SchedulerViewType _view = SchedulerViewType.Day;
-	private IEnumerable<Practice.Provider> _visibleProviders = [];
-	private IEnumerable<Appointment.Response> _appointments = [];
+	private SchedulerViewType _view = SchedulerViewType.Week;
+	private IEnumerable<Schedule.ProviderDetails>? _providers;
+	private IEnumerable<Schedule.ProviderDetails> _visibleProviders = [];
+	private IEnumerable<Schedule.AppointmentDetails>? _appointments;
+	private Location.Details? _location;
+	private bool IsLoading => _location is null || _appointments is null || _providers is null;
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
@@ -27,14 +30,45 @@
 
 		if (firstRender)
 		{
-			_visibleProviders = PracticeProvider.Providers;
+			await GetLocation();
+			await GetProviders();
 			await RefreshAppointments();
 		}
 	}
 
+	private async Task GetLocation()
+	{
+		var locations = await Request.Send(new Location.GetBy
+			{
+				PracticeId = new Practice.Id(1),
+				LocationId = new Location.Id(5)
+			});
+
+		_location = locations.First();
+	}
+
+	private async Task GetProviders()
+	{
+		ArgumentNullException.ThrowIfNull(_location!.LocationId);
+		var providers = await Request.Send(new Schedule.GetProviderDetails
+			{
+				LocationId = _location.LocationId
+			});
+
+		_providers = providers;
+		_visibleProviders = providers;
+	}
+
 	private async Task RefreshAppointments()
 	{
-		_appointments = await ScheduleProvider.GetAppointments(_schedulerDate.Add(PracticeProvider.Configuration.OpeningTime), PracticeProvider.Providers);
+		ArgumentNullException.ThrowIfNull(_location!.LocationId);
+		_appointments = await Request.Send(new Schedule.GetAppointments
+			{
+				DateRange = new Appointment.DateRange(DateTime.Now, DateTime.Now.AddDays(7)),
+				Providers = _visibleProviders.Select(provider => provider.ProviderId!),
+				LocationId = _location.LocationId
+			});
+
 		StateHasChanged();
 	}
 }

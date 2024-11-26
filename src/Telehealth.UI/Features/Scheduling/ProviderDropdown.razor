@@ -1,0 +1,31 @@
+﻿<Dropdown CssClass="@_cssClass"
+		  Data="@Providers"
+		  ShowSelectedValues="@ShowSelectedValues"
+		  TextFieldName="@TextFieldName"
+		  ValueFieldName="@ValueFieldName"
+		  @bind-SelectedValues="@SelectedProviders">
+	<DisplayTemplate Context="tagContext">
+		<div class="dxbl-tag @tagContext.DataItem.BackgroundCssClass">
+			<div class="dxbl-tag-text">
+				@tagContext.DataItem.ProviderName
+			</div>
+			<DxButton Click="@tagContext.RemoveTagAction" @onclick:stopPropagation
+					  IconCssClass="tagbox-tag-template-close-btn-icon"
+					  RenderStyle="ButtonRenderStyle.None"
+					  RenderStyleMode="ButtonRenderStyleMode.Text">
+			</DxButton>
+		</div>
+	</DisplayTemplate>
+</Dropdown>
+
+@code {
+	[Parameter] public string? CssClass { get; init; }
+	[Parameter] public required IEnumerable<Schedule.ProviderDetails> Providers { get; set; }
+	[Parameter] public required IEnumerable<Schedule.ProviderDetails> SelectedProviders { get; set; }
+	[Parameter] public EventCallback<IEnumerable<Schedule.ProviderDetails>> SelectedProvidersChanged { get; set; }
+	[Parameter, EditorRequired] public required string TextFieldName { get; init; }
+	[Parameter, EditorRequired] public required string ValueFieldName { get; init; }
+	[Parameter] public bool ShowSelectedValues { get; init; }
+
+	private string _cssClass => string.Join(" ", "w-75", "mb-1", CssClass ?? string.Empty);
+}

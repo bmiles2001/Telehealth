@@ -1,0 +1,53 @@
+﻿<EditForm Model="@_searchedName" OnValidSubmit="@OnSearch">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <DxGrid AllowSelectRowByClick
+            AllowSort
+            Data="@_results"
+            HighlightRowOnHover
+            SelectedDataItem="@SelectedProfile"
+            SelectedDataItemChanged="@OnSelectedProfileChanged">
+        <Columns>
+            <DxGridDataColumn FieldName="@nameof(Profiles.Profile.Details.FirstName)" Caption="First Name" />
+            <DxGridDataColumn FieldName="@nameof(Profiles.Profile.Details.LastName)" Caption="Last Name" />
+            <DxGridDataColumn FieldName="@nameof(Profiles.Profile.Details.DateOfBirth)" Caption="Birth Date" />
+        </Columns>
+        <ToolbarTemplate Context="toolbar">
+            <PatientSearchInput Click="@OnSearch"
+                                CssClass="mb-2"
+                                Placeholder="Enter patient name"
+                                @bind-Value="@_searchedName" />
+        </ToolbarTemplate>
+    </DxGrid>
+
+</EditForm>
+
+@code {
+
+    [Inject] public required ISender Request { get; set; }
+
+    [Parameter] public Profiles.Profile.Details? SelectedProfile { get; set; }
+    [Parameter] public EventCallback<Profiles.Profile.Details?> SelectedProfileChanged { get; set; }
+
+    private IEnumerable<Profiles.Profile.Details> _results = [];
+    private string? _searchedName;
+
+    private async Task OnSearch()
+    {
+        if (!string.IsNullOrEmpty(_searchedName))
+        {
+            _results = await Request.Send(new Patient.GetBy{ Name = _searchedName });
+
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnSelectedProfileChanged(object newProfile)
+    {
+        if (SelectedProfileChanged.HasDelegate)
+        {
+            await SelectedProfileChanged.InvokeAsync(newProfile as Profiles.Profile.Details);
+        }
+    }
+}

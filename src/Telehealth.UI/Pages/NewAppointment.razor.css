@@ -1,0 +1,7 @@
+.page-container {
+    display: flex;
+}
+
+.page-container > div {
+    flex-direction: column;
+}

@@ -1,0 +1,51 @@
+﻿@page "/practices"
+@using Telehealth.UI.Features.Practices.Locations
+<h3>ShowPractices</h3>
+
+
+@if (_practice is not null)
+{
+	<DxGrid Data="@_practice.Locations">
+		<Columns>
+			<DxGridDataColumn FieldName="@nameof(Location.Details.LocationId)" Caption="Id" />
+			<DxGridDataColumn FieldName="@nameof(Location.Details.Name)" Caption="Name" />
+			<DxGridDataColumn FieldName="@nameof(Location.Details.OperatingHours.OpeningTime)" Caption="Location Opening Time" UnboundType="GridUnboundColumnType.Object" UnboundExpression="OperatingHours.OpeningTime">
+				<CellDisplayTemplate>
+					@FormatTime(context)
+				</CellDisplayTemplate>
+			</DxGridDataColumn>
+			<DxGridDataColumn FieldName="@nameof(Location.Details.OperatingHours.ClosingTime)" Caption="Location ClosingTime Time" UnboundType="GridUnboundColumnType.Object" UnboundExpression="OperatingHours.ClosingTime">
+				<CellDisplayTemplate>
+					@FormatTime(context)
+				</CellDisplayTemplate>
+			</DxGridDataColumn>
+			<DxGridDataColumn FieldName="@nameof(Location.Details.StreetAddress)" Caption="Street Address" />
+			<DxGridDataColumn FieldName="@nameof(Location.Details.City)" Caption="City" />
+			<DxGridDataColumn FieldName="@nameof(Location.Details.State)" Caption="State" />
+			<DxGridDataColumn FieldName="@nameof(Location.Details.Zip)" Caption="Zip" />
+		</Columns>
+	</DxGrid>
+}
+
+@code {
+	[Inject] public required ISender Request { get; set; }
+
+	private Practice.Details? _practice { get; set; }
+	private const string TimeFormat = "h:mm tt";
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			_practice = await Request.Send(new Practice.GetBy() { PracticeId = new Practice.Id(1) });
+			StateHasChanged();
+		}
+	}
+
+	private string FormatTime(GridDataColumnCellDisplayTemplateContext context)
+	{
+		TimeSpan time = (TimeSpan)context.Value;
+		return new DateTime(DateOnly.FromDateTime(DateTime.Now), TimeOnly.FromTimeSpan(time))
+		.ToString(TimeFormat);
+	}
+}

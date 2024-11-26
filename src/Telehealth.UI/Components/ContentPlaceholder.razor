@@ -5,12 +5,28 @@
 else
 {
 	<SectionOutlet SectionName="@SectionName" />
+
+	@if (HasDefaultContent)
+	{
+		<SectionOutlet SectionName="@SectionName">
+			@DefaultContent
+		</SectionOutlet>
+	}
 }
 
 @code {
 	private bool HasContent => ChildContent is not null;
-	const string SectionName = "content-placeholder";
+	private bool HasDefaultContent => DefaultContent is not null;
 
+	[Parameter] public required string SectionName { get; set; }
+
+	/// <summary>
+	/// Default content to show until ChildContent is rendered.
+	/// </summary>
+	[Parameter] public RenderFragment? DefaultContent { get; set; }
+
+	/// <summary>
+	/// Output to render at the placeholder. Will override DefaultContent
+	/// </summary>
 	[Parameter] public RenderFragment? ChildContent { get; set; }
-
 }

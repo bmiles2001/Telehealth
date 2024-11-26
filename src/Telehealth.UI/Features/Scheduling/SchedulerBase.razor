@@ -1,0 +1,90 @@
+﻿<DxScheduler CssClass="@CssClass"
+			 DataStorage="@_dataStorage"
+			 GroupType="SchedulerGroupType.Date"
+			 ResourceColorInHeaderVisible
+			 VisibleResourcesDataSource="@VisibleProviders" VisibleResourcesDataSourceChanged="@OnVisibleProvidersChanged"
+			 @bind-ActiveViewType:get="@ViewType" @bind-ActiveViewType:set="@ViewTypeChanged"
+			 @bind-StartDate:get="@Date" @bind-StartDate:set="@DateChanged"
+			 AllowCreateAppointment="false"
+			 AllowDeleteAppointment="false"
+			 AllowDragAppointment="false"
+			 AllowDragAppointmentBetweenResources="false"
+			 AllowEditAppointment="false"
+			 AllowResizeAppointment="false"
+			 ResourceNavigatorVisible="false"
+			 InnerComponentSizeMode="SizeMode.Medium">
+	<DxSchedulerDayView ShowWorkTimeOnly
+						WorkTime="@_workingHours"
+						TimeScale="TimeSpan.FromMinutes(15)"
+						DayCount="1"
+						TimeIndicatorVisibility="@SchedulerTimeIndicatorVisibility.Always"
+						SnapToCellsMode="SchedulerSnapToCellsMode.Always" />
+	<DxSchedulerWeekView
+						WorkTime="@_workingHours"
+						TimeScale="TimeSpan.FromMinutes(15)"
+						TimeIndicatorVisibility="@SchedulerTimeIndicatorVisibility.Always"
+						SnapToCellsMode="SchedulerSnapToCellsMode.Always" />
+</DxScheduler>
+
+@code {
+	[Parameter] public string? CssClass { get; set; }
+	[Parameter] public required Location.OperatingHours BusinessHours { get; set; }
+
+	// Scheduler Appointments
+	[Parameter] public required IEnumerable<Schedule.AppointmentDetails> Appointments { get; set; }
+
+	// Scheduler Date
+	[Parameter] public required DateTime Date { get; set; } = DateTime.Today;
+	[Parameter] public EventCallback<DateTime> DateChanged { get; set; }
+
+	[Parameter] public required SchedulerViewType ViewType { get; set; }
+	[Parameter] public required EventCallback<SchedulerViewType> ViewTypeChanged { get; set; }
+
+	// Healthcare Providers
+	[Parameter] public required IEnumerable<Schedule.ProviderDetails> Providers { get; set; } = [];
+	[Parameter] public required IEnumerable<Schedule.ProviderDetails> VisibleProviders { get; set; } = [];
+	[Parameter] public EventCallback<IEnumerable<Schedule.ProviderDetails>> VisibleProvidersChanged { get; set; }
+
+	private DxSchedulerDataStorage? _dataStorage;
+	private DxSchedulerTimeSpanRange _workingHours => new(BusinessHours.OpeningTime, BusinessHours.ClosingTime);
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+		_dataStorage = new DxSchedulerDataStorage
+			{
+				AppointmentMappings = appointmentMappings,
+				AppointmentsSource = Appointments,
+				ResourceMappings = providerMappings,
+				ResourcesSource = Providers,
+			};
+	}
+
+	private async Task OnVisibleProvidersChanged(System.Collections.IEnumerable visibleProviders)
+	{
+		if (VisibleProvidersChanged.HasDelegate)
+		{
+			await VisibleProvidersChanged.InvokeAsync(visibleProviders.Cast<Schedule.ProviderDetails>());
+		}
+	}
+
+	private static readonly DxSchedulerAppointmentMappings appointmentMappings = new()
+		{
+			// https://docs.devexpress.com/Blazor/DevExpress.Blazor.SchedulerAppointmentType
+			//Type = nameof(Appointment.Details.AppointmentType),
+			Start = nameof(Schedule.AppointmentDetails.StartTime),
+			End = nameof(Schedule.AppointmentDetails.EndTime),
+			ResourceId = nameof(Schedule.AppointmentDetails.ProviderId),
+			Subject = nameof(Schedule.AppointmentDetails.Title),
+			Location = nameof(Schedule.AppointmentDetails.LocationName),
+			Description = nameof(Schedule.AppointmentDetails.AppointmentType),
+		};
+
+	private static readonly DxSchedulerResourceMappings providerMappings = new()
+		{
+			Id = nameof(Schedule.ProviderDetails.ProviderId),
+			Caption = nameof(Schedule.ProviderDetails.ProviderName),
+			BackgroundCssClass = nameof(Schedule.ProviderDetails.BackgroundCssClass),
+			TextCssClass = nameof(Schedule.ProviderDetails.TextCssClass),
+		};
+}
