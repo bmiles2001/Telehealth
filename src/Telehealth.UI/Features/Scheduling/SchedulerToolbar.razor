@@ -1,9 +1,10 @@
-﻿<div class="scheduler-toolbar">
+﻿<div class="scheduler-toolbar @CssClass">
 	<ContentPlaceholder SectionName="@Schedule.ProviderContentPlaceholder" />
 	<SchedulerFlyoutCalendar CssClass="justify-center" Date="@Date" DateChanged="@DateChanged" DateFormat="@DateFormat" />
 </div>
 
 @code {
+	[Parameter] public string? CssClass { get; init; }
 	[Parameter] public DateTime Date { get; set; }
 	[Parameter] public EventCallback<DateTime> DateChanged { get; set; }
 	[Parameter] public string DateFormat { get; set; } = "MMMM dd, yyyy";
