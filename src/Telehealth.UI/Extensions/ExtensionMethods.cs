@@ -33,4 +33,9 @@ public static class ExtensionMethods
 	{
 		return faker.CustomInstantiator(_ => (T)Activator.CreateInstance(typeof(T), nonPublic: true)!);
 	}
+
+	public static string FromArray(this IEnumerable<string> values, string delimiter = " ")
+	{
+		return string.Join(delimiter, values);
+	}
 }

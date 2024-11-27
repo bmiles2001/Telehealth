@@ -1,0 +1,12 @@
+﻿<DxButton @onclick:stopPropagation
+		  CssClass="@CssClass"
+		  Click="@OnClick"
+		  Text="@DisplayText" />
+
+@code {
+
+	[Parameter, EditorRequired] public required string DisplayText { get; init; }
+	[Parameter] public EventCallback<MouseEventArgs> OnClick { get; init; }
+	[Parameter] public string? CssClass { get; init; }
+
+}

@@ -4,11 +4,11 @@
 		  ClearButtonDisplayMode="DataEditorClearButtonDisplayMode.Auto"
 		  Data="@Data"
 		  DropDownWidthMode="DropDownWidthMode.EditorWidth"
-		  NullText="@EmptyDropDownText"
 		  HideSelectedItems="@ShowSelectedValues"
+		  NullText="@PlaceholderText"
+		  TagDisplayTemplate="@DisplayTemplate"
 		  TextFieldName="@TextFieldName"
 		  ValueFieldName="@ValueFieldName"
-		  TagDisplayTemplate="@DisplayTemplate"
 		  @bind-Values="@SelectedValues" />
 
 @code {
@@ -21,7 +21,7 @@
 	[Parameter] public EventCallback<IEnumerable<TSelection>> SelectedValuesChanged { get; init; }
 	[Parameter] public bool ShowSelectedValues { get; init; }
 	[Parameter] public RenderFragment<TagBoxTagDisplayTemplateContext<TSelection>>? DisplayTemplate { get; init; }
+	[Parameter] public string? PlaceholderText { get; init; }
 
-	private const string EmptyDropDownText = "Select a provider";
 	private bool HasSelectedValues => SelectedValues.Any();
 }
