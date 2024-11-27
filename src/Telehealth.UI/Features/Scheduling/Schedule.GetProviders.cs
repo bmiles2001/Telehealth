@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Telehealth.UI.Features.Practices.Locations;
 using Telehealth.UI.Features.Practices.Providers;
 using Telehealth.UI.Infrastructure;
+using Color = DevExpress.Blazor.Scheduler.Internal.SchedulerCssClasses;
 
 namespace Telehealth.UI.Features.Scheduling;
 
@@ -36,7 +37,7 @@ public static partial class Schedule
 
 	public class GetProviderDetailsHandler(TelehealthDbContext context) : IRequestHandler<GetProviderDetails, IEnumerable<ProviderDetails>>
 	{
-		private readonly string[] BackgroundColorChoices = ["dxbl-green-color", "dxbl-orange-color", "dxbl-purple-color", "dxbl-indigo-color", "dxbl-red-color"];
+		private readonly string[] BackgroundColorChoices = [Color.GreenColor, Color.OrangeColor, Color.PurpleColor, Color.IndigoColor, Color.RedColor, Color.BlueColor];
 		private const string TextCssClass = "text-white";
 		public async Task<IEnumerable<ProviderDetails>> Handle(GetProviderDetails request, CancellationToken cancellationToken)
 		{
